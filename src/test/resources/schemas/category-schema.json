@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+          "id": {"type": "integer"},
+          "categoryName": {"type": "string"},
+          "isArchived": {"type": "boolean"}
+        },
+        "required": [
+            "id", 
+            "categoryName", 
+            "isArchived"
+        ]
+      }

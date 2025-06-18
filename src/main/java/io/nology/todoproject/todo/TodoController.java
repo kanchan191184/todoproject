@@ -33,7 +33,6 @@ public class TodoController {
     public ResponseEntity<Todo> create(@Valid @RequestBody CreateTodoDTO data) {
         Todo saved = this.todoService.create(data);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
-        // return ResponseEntity.ok(todoService.create(data));
     }
 
     @GetMapping
@@ -43,7 +42,6 @@ public class TodoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Todo> getById(@PathVariable Long id) throws NotFoundException {
-        // return todoService.findById(id).orElse(null);
         Optional<Todo> foundTodo = this.todoService.findById(id);
         if(foundTodo.isPresent()) {
             return new ResponseEntity<>(foundTodo.get(), HttpStatus.OK);
@@ -52,12 +50,9 @@ public class TodoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Todo> update(@Valid @PathVariable Long id, @RequestBody UpdateTodoDTO data)
+    public ResponseEntity<Todo> update(@PathVariable Long id,@Valid @RequestBody UpdateTodoDTO data)
     throws NotFoundException {
-        // return ResponseEntity.ok(todoService.updateById(id, data));
-
         Optional<Todo> result = this.todoService.updateById(id, data);
-        
         Todo updated = result.orElseThrow(
             () -> new NotFoundException("Could not update todo with id " + id + ", because it does not exist"));
         

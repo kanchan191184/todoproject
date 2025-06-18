@@ -64,26 +64,31 @@ public class TodoService {
     }
 
     public Optional<Todo> updateById(Long id, UpdateTodoDTO data) {
-    // Todo todo = todoRepository.findById(id).orElseThrow(() -> new RuntimeException("Todo not found"));
-
     Optional<Todo> foundTodo = this.findById(id);
-
     if(foundTodo.isEmpty()) {
         return foundTodo;
     }
 
     Todo todoFromDB = foundTodo.get();
-
     if (data.getName() != null) todoFromDB.setName(data.getName());
     if (data.getIsCompleted() != null) todoFromDB.setIsCompleted(data.getIsCompleted());
     if (data.getDueDate() != null) todoFromDB.setDueDate(data.getDueDate());
     if (data.getCategories() != null) {
+
+        //If you try to update a todo with a category name that does not exist in the database, 
+        //it will auto-create category in category table
+
         Set<Category> categories = Arrays.stream(data.getCategories())
             .map(name -> categoryRepository.findByCategoryName(name)
-                .orElseThrow(() -> new RuntimeException("Category not found: " + name)))
+                .orElseGet(() -> {
+                    Category newCategory = new Category();
+                    newCategory.setCategoryName(name);
+                    return categoryRepository.save(newCategory);
+                }))
             .collect(Collectors.toSet());
         todoFromDB.setCategories(categories);
     }
+
     this.todoRepository.save(todoFromDB);
     return Optional.of(todoFromDB);
 }

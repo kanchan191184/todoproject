@@ -2,6 +2,7 @@ package io.nology.todoproject.todo;
 
 import jakarta.persistence.Table;
 
+import java.util.HashSet;
 import java.util.Set;
 import io.nology.todoproject.category.Category;
 import jakarta.persistence.*;
@@ -25,16 +26,17 @@ public class Todo {
     private Boolean isCompleted;
     private String dueDate;
 
+    @Column(nullable = false)
+    private Boolean isArchived = false;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "todo_categories",
         joinColumns = @JoinColumn(name = "todo_id"),
         inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    private Set<Category> categories;
 
-    @Column(nullable = false)
-    private Boolean isArchived = false;
+    private Set<Category> categories = new HashSet<>();
 
     // Getters and setters
     public Long getId() { return id; }

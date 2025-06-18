@@ -1,8 +1,6 @@
 package io.nology.todoproject.todo;
 
 import java.util.ArrayList;
-// import java.util.HashSet;
-// import java.util.Set;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +69,8 @@ public class TodoEndToEndTest {
             .then().statusCode(HttpStatus.OK.value())
             .body("$", hasSize(2))
             .body("name",
-                hasItems("Create Portfolio", "Create Fullstack Project"));
+                hasItems("Create Portfolio", "Create Fullstack Project"))
+            .body(matchesJsonSchemaInClasspath("schemas/todo-list-schema.json"));
         
     }
 
@@ -113,7 +112,8 @@ public class TodoEndToEndTest {
             .get("/todos/" + existingId)
             .then()
             .statusCode(HttpStatus.OK.value())
-            .body("name", equalTo("Create Portfolio"));
+            .body("name", equalTo("Create Portfolio"))
+            .body(matchesJsonSchemaInClasspath("schemas/todo-schema.json"));
 
     }
 
@@ -184,4 +184,95 @@ public class TodoEndToEndTest {
                 .statusCode(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
     }
 
+    // PATCH / todos
+
+    @Test
+    public void updateTodo_WhenPassValidData_UpdatesAndReturnsTodo() {
+
+     // First, create a todo to update (or use an existing one)
+    String createJson = """
+    {
+      "name": "Original Todo",
+      "isCompleted": false,
+      "dueDate": "2025-07-01",
+      "categories": ["coding"]
+    }
+    """;
+
+    int todoId = 
+        given()
+            .contentType(ContentType.JSON)
+            .body(createJson)
+            .when()
+            .post("/todos")
+            .then()
+            .statusCode(HttpStatus.CREATED.value())
+            .extract()
+            .path("id");
+
+      // Prepare update data
+    String updateJson = """
+    {
+      "name": "Updated Todo",
+      "isCompleted": true,
+      "dueDate": "2025-08-01",
+      "categories": ["coding", "frontend"]
+    }
+    """;
+
+    // Update the todo
+    given()
+        .contentType(ContentType.JSON)
+        .body(updateJson)
+        .when()
+        .put("/todos/" + todoId)
+        .then()
+        .statusCode(HttpStatus.OK.value())
+        .body("name", equalTo("Updated Todo"))
+        .body("isCompleted", equalTo(true))
+        .body("dueDate", equalTo("2025-08-01"))
+        .body("categories.categoryName", hasItems("coding", "frontend"));
+    }
+
+    @Test
+    public void updateTodo_WhenIdDoesNotExist_ReturnsNotFound() {
+
+    String updateJson = """
+    {
+      "name": "Should Not Exist",
+      "isCompleted": true,
+      "dueDate": "2025-08-01",
+      "categories": ["coding"]
+    }
+    """;
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(updateJson)
+        .when()
+        .put("/todos/999999") // unlikely to exist
+        .then()
+        .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    public void updateTodo_WhenInvalidData_ReturnsBadRequest() {
+    // Assume a todo exists with ID 1
+    String invalidJson = """
+    {
+      "name": "",
+      "isCompleted": true,
+      "dueDate": "",
+      "categories": []
+    }
+    """;
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(invalidJson)
+        .when()
+        .put("/todos/1")
+        .then()
+        .statusCode(HttpStatus.BAD_REQUEST.value());
+}
 }

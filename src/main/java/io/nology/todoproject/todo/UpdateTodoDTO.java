@@ -1,14 +1,15 @@
 package io.nology.todoproject.todo;
 
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotBlank;
 
 public class UpdateTodoDTO {
 
-    @Pattern(regexp = ".*\\S.*", message = "Name must not be blank")
+    @NotBlank(message= "Name must not be blank")
     private String name;
 
     private Boolean isCompleted;
 
+    @NotBlank(message = "Due date must not be blank")
     private String dueDate; 
 
     private String[] categories;
