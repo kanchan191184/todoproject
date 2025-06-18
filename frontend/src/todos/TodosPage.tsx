@@ -73,6 +73,7 @@ const TodosPage = () => {
             <tr>
               <th className="border border-gray-300 px-4 py-2 text-left">Todo Title</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Todo Categories</th>
+              <th className="border border-gray-300 px-4 py-2 text-left">Todo Due Date</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Todo Completed</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Actions</th>
             </tr>

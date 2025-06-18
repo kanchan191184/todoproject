@@ -6,8 +6,12 @@ public class CreateTodoDTO {
 
     @NotBlank(message = "Name must not be blank")
     private String name;
+
     private Boolean isCompleted;
+
+    @NotBlank
     private String dueDate;
+
     private String[] categories;
 
     // Getters and setters

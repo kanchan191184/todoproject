@@ -44,7 +44,9 @@ public class Todo {
     public void setIsCompleted(Boolean isCompleted) { this.isCompleted = isCompleted; }
     public String getDueDate() { return dueDate; }
     public void setDueDate(String dueDate) { this.dueDate = dueDate; }
-    public Set<Category> getCategories() { return categories; }
+    public Set<Category> getCategories() { 
+        return categories; 
+    }
     public void setCategories(Set<Category> categories) { this.categories = categories; }
     public Boolean getIsArchived() { return isArchived; }
     public void setIsArchived(Boolean isArchived) { this.isArchived = isArchived; }

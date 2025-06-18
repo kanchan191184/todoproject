@@ -21,7 +21,7 @@ const TodoCard = ({todo, onDelete, onUpdate, onComplete}: TodoCardProps) => {
             .join(",")
           : String(todo.categories)}
       </td>
-
+      <td className="border border-gray-300 px-4 py-2">{todo.dueDate}</td>
       <td className="border border-gray-300 px-4 py-2 font-semibold">
         {todo.isCompleted ? "YES" : "NO"}
       </td>

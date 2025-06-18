@@ -5,11 +5,13 @@ import jakarta.validation.constraints.Pattern;
 public class UpdateTodoDTO {
 
     @Pattern(regexp = ".*\\S.*", message = "Name must not be blank")
-    
     private String name;
+
     private Boolean isCompleted;
-    private String dueDate; // Assuming date is in ISO format (e.g., "2023-10-01")
-    private String[] categories; // Assuming categories are passed as an array of strings
+
+    private String dueDate; 
+
+    private String[] categories;
 
     public String getName() {
         return name;

@@ -63,19 +63,29 @@ public class TodoService {
         return true;
     }
 
-    public Todo updateById(Long id, UpdateTodoDTO data) {
-    Todo todo = todoRepository.findById(id).orElseThrow(() -> new RuntimeException("Todo not found"));
-    if (data.getName() != null) todo.setName(data.getName());
-    if (data.getIsCompleted() != null) todo.setIsCompleted(data.getIsCompleted());
-    if (data.getDueDate() != null) todo.setDueDate(data.getDueDate());
+    public Optional<Todo> updateById(Long id, UpdateTodoDTO data) {
+    // Todo todo = todoRepository.findById(id).orElseThrow(() -> new RuntimeException("Todo not found"));
+
+    Optional<Todo> foundTodo = this.findById(id);
+
+    if(foundTodo.isEmpty()) {
+        return foundTodo;
+    }
+
+    Todo todoFromDB = foundTodo.get();
+
+    if (data.getName() != null) todoFromDB.setName(data.getName());
+    if (data.getIsCompleted() != null) todoFromDB.setIsCompleted(data.getIsCompleted());
+    if (data.getDueDate() != null) todoFromDB.setDueDate(data.getDueDate());
     if (data.getCategories() != null) {
         Set<Category> categories = Arrays.stream(data.getCategories())
             .map(name -> categoryRepository.findByCategoryName(name)
                 .orElseThrow(() -> new RuntimeException("Category not found: " + name)))
             .collect(Collectors.toSet());
-        todo.setCategories(categories);
+        todoFromDB.setCategories(categories);
     }
-    return todoRepository.save(todo);
+    this.todoRepository.save(todoFromDB);
+    return Optional.of(todoFromDB);
 }
 
 public Optional<Todo> markComplete(Long id) {

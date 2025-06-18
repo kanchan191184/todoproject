@@ -3,8 +3,14 @@ package io.nology.todoproject.todo;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
 
+import io.nology.todoproject.common.exceptions.NotFoundException;
+import jakarta.validation.Valid;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,8 +30,10 @@ public class TodoController {
     }
     
     @PostMapping
-    public ResponseEntity<Todo> create(@RequestBody CreateTodoDTO data) {
-        return ResponseEntity.ok(todoService.create(data));
+    public ResponseEntity<Todo> create(@Valid @RequestBody CreateTodoDTO data) {
+        Todo saved = this.todoService.create(data);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+        // return ResponseEntity.ok(todoService.create(data));
     }
 
     @GetMapping
@@ -34,13 +42,26 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
-        public Todo getById(@PathVariable Long id) {
-        return todoService.findById(id).orElse(null);
+    public ResponseEntity<Todo> getById(@PathVariable Long id) throws NotFoundException {
+        // return todoService.findById(id).orElse(null);
+        Optional<Todo> foundTodo = this.todoService.findById(id);
+        if(foundTodo.isPresent()) {
+            return new ResponseEntity<>(foundTodo.get(), HttpStatus.OK);
+        }
+        throw new NotFoundException("Todo with id " + id + " doesn't exist");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Todo> update(@PathVariable Long id, @RequestBody UpdateTodoDTO data) {
-        return ResponseEntity.ok(todoService.updateById(id, data));
+    public ResponseEntity<Todo> update(@Valid @PathVariable Long id, @RequestBody UpdateTodoDTO data)
+    throws NotFoundException {
+        // return ResponseEntity.ok(todoService.updateById(id, data));
+
+        Optional<Todo> result = this.todoService.updateById(id, data);
+        
+        Todo updated = result.orElseThrow(
+            () -> new NotFoundException("Could not update todo with id " + id + ", because it does not exist"));
+        
+        return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/complete")
