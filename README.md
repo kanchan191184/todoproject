@@ -77,3 +77,8 @@ Overview
 
  - Run the application in your browser at "http://localhost:5173" for frontend (or confirm once which port is showing in the terminal after running frontend). 
 
+
+- To run Frontend Vitest for React code - use this command 
+    npm run test
+
+- 
