@@ -81,4 +81,6 @@ Overview
 - To run Frontend Vitest for React code - use this command 
     npm run test
 
-- 
+- I am using vitest and react testing library for testing frontend.
+
+- For backend end to end testing, I am using rest-assured with Spring boot for writing test cases for todos.
