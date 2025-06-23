@@ -1,86 +1,99 @@
-## Todos API
-## Overview
 
-- Create an API to be integrated with your todos-ui project, that allows you to store and retrieve tasks from a database.
+📝 Todo Project (Spring Boot + React + Vite)
+A full-stack Todo application with category management, built with Spring Boot (Java) for the backend and React + Vite for the frontend.
+This project allows you to create, update, filter, and organize your tasks with categories, and provides a clean, modern UI.
 
-MVP
-- Deleting a task should set an isArchived flag in the database instead of deleting the task from the database
+🚀 Features
+## Backend (Spring Boot)
+- RESTful API for Todos and Categories
+- Soft delete for tasks (isArchived flag)
+- Separate tables for todos and categories
+- End-to-end tests with Rest Assured
 
-- Add a filter to the frontend application that allows you to filter tasks by category
+## Frontend (React + Vite + Tailwind)
+- Add, update, delete, and filter todos
+- Manage categories (add, update, delete)
+- Assign multiple categories to a todo
+- Responsive, modern UI with Tailwind CSS
+- Category badges for better visibility
+- Summary section for task counts
+- Frontend tests with Vitest and React Testing Library
 
-- Categories and Todos should be stored in separate tables
-Endpoints
+🏗️ Tech Stack
+Backend: Java, Spring Boot, JPA/Hibernate, MySQL (or H2), Rest Assured
+Frontend: React, Vite, TypeScript, Tailwind CSS, Vitest, React Testing Library
 
-- GET /categories
+📦 Project Structure
+todoproject/
+  ├── src/      # Spring Boot API
+  ├── frontend/     # React + Vite UI + Typescript/ Tailwind
+  └── README.md
 
-- POST /categories
+⚙️ Setup & Running
+## Backend
+1.Install Java 17+ and Maven.
+2.Configure your database in application.properties.
+3.In the todoproject root, run:
+   ## mvn spring-boot:run
 
-- PUT /categories/:id
+## The API will be available at http://localhost:8080.
 
-- DELETE /categories/:id
+## Frontend
+1. In a new terminal, move to the frontend folder:
+    ## cd frontend
 
-- GET /todos
+2. Install dependencies:
+    ## npm install
 
-- GET /todos?category={} query parameters
+3. Start the dev server:
+    ## npm run dev
 
-- POST /todos
+## The app will be available at http://localhost:5173 (or the port shown in your terminal).
 
-- PUT /todos/:id
+🛠️ API Endpoints
+## Categories
+GET    /categories — List all categories
+POST   /categories — Create a new category
+PUT    /categories/:id — Update a category
+DELETE /categories/:id — Delete (archive) a category
 
-- DELETE /todos/:id
+## Todos
+GET    /todos — List all todos
+GET    /todos?category={} — Filter todos by category
+POST   /todos — Create a new todo
+PUT    /todos/:id — Update a todo
+DELETE /todos/:id — Delete (archive) a todo
 
-- todo
+
+## Sample Todo JSON
+
 {
-    "name": "Create a Spring project",
-    "dueDate": "2025-06-01",
-    "isCompleted": true,
-    "categories": ["coding", "backend"]
+  "name": "Create a Spring project",
+  "dueDate": "2025-06-01",
+  "isCompleted": true,
+  "categories": ["coding", "backend"]
 }
 
-- category
+## Sample Category JSON
+
 {
-    "name": "coding",
+  "categoryName": "coding"
 }
 
+🧪 Testing
+## Frontend
+- Uses Vitest and React Testing Library
+- Run tests with: 
+    ## npm run test
 
-## Todos UI
-Overview
+## Backend
+- Uses Rest Assured for end-to-end API testing
+- Run tests with:
+    ## mvn test
 
-- Your task is to create an application that allows you to track, add, and delete tasks as well as manage categories of tasks.
+🎨 UI/UX
+- Responsive and modern design with Tailwind CSS
+- Category badges for visibility
+- Error handling and validation on forms
+- Summary section showing counts of each task type
 
-- Please don't make your app look like this, make it nicer! This is just a summary of what the frontend should be doing: Todos UI Example
-
-## MVP
-- Must be able to add categories
-- Must be able to add new tasks tagged with a task category
-- Must be able to update tasks automatically by changing the task n name and the category
-- Must be able to duplicate tasks
-- Must be able to delete tasks
-- You must add your own styling
-
-## Bonus
-
-- Come up with a feature that allows us to delete and update task categories
-
-- Create a summary section that lists how many of each type of task there are
-
-
-## API Documentation
-
- - To run backend, use the command "mvn spring-boot:run" in the terminal. 
- - Make sure you are in base folder - named "todoproject"
-
- - To run frontend, move to folder "todoproject/frontend".
- - use the command "npm run dev" in the terminal.
-
- - Run both frontend and backend at the same time to see the application in action.
-
- - Run the application in your browser at "http://localhost:5173" for frontend (or confirm once which port is showing in the terminal after running frontend). 
-
-
-- To run Frontend Vitest for React code - use this command 
-    npm run test
-
-- I am using vitest and react testing library for testing frontend.
-
-- For backend end to end testing, I am using rest-assured with Spring boot for writing test cases for todos.
