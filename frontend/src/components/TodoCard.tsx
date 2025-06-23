@@ -11,16 +11,8 @@ interface TodoCardProps {
 const TodoCard = ({todo, onDelete, onUpdate, onComplete}: TodoCardProps) => {
   return (
       <tr className="border-b border-gray-200">
-      <td className="border border-gray-300 px-4 py-2">{todo.name}</td>
+      <td className="border border-gray-300 font-bold px-4 py-2">{todo.name}</td>
       <td className="border border-gray-300 px-4 py-2">
-        {/* {Array.isArray(todo.categories)
-          ? todo.categories
-            .map((cat: any) => {
-              const name= cat?.categoryName || String(cat);
-              return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-            })
-            .join(",")
-          : String(todo.categories)} */}
              {/* Render category badges */}
         {Array.isArray(todo.categories) && todo.categories.length > 0 ? (
           todo.categories.map((cat: any) =>
@@ -33,6 +25,13 @@ const TodoCard = ({todo, onDelete, onUpdate, onComplete}: TodoCardProps) => {
         )}
       </td>
       <td className="border border-gray-300 px-4 py-2">{todo.dueDate}</td>
+      <td className="border border-gray-300 px-4 py-2">
+        {!todo.isCompleted && new Date(todo.dueDate) < new Date() ? (
+          <span className="text-red-600 font-bold">Overdue</span>
+        ) : (
+          <span className="text-green-600 font-bold">On Time</span>
+        )}
+      </td>
       <td className="border border-gray-300 px-4 py-2 font-semibold">
         {todo.isCompleted ? "YES" : "NO"}
       </td>
