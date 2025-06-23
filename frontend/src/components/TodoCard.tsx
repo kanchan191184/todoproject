@@ -1,4 +1,5 @@
 import type { Todo } from "../services/todos";
+import CategoryBadge from "./CategoryBadge";
 
 interface TodoCardProps {
     todo: Todo;
@@ -12,14 +13,24 @@ const TodoCard = ({todo, onDelete, onUpdate, onComplete}: TodoCardProps) => {
       <tr className="border-b border-gray-200">
       <td className="border border-gray-300 px-4 py-2">{todo.name}</td>
       <td className="border border-gray-300 px-4 py-2">
-        {Array.isArray(todo.categories)
+        {/* {Array.isArray(todo.categories)
           ? todo.categories
             .map((cat: any) => {
               const name= cat?.categoryName || String(cat);
               return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
             })
             .join(",")
-          : String(todo.categories)}
+          : String(todo.categories)} */}
+             {/* Render category badges */}
+        {Array.isArray(todo.categories) && todo.categories.length > 0 ? (
+          todo.categories.map((cat: any) =>
+            cat?.categoryName ? (
+              <CategoryBadge key={cat.id ?? cat.categoryName} name={cat.categoryName} />
+            ) : null
+          )
+        ) : (
+          <span className="text-gray-400 italic">No categories</span>
+        )}
       </td>
       <td className="border border-gray-300 px-4 py-2">{todo.dueDate}</td>
       <td className="border border-gray-300 px-4 py-2 font-semibold">

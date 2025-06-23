@@ -1,5 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { addCategory, type Category, type TodoCategory } from "../services/todos";
+import { validateCategoryForm, type CategoryFormValues, type ValidationErrors } from "../utils/validation";
 
 
 interface TodoCategoryProps {
@@ -10,10 +11,19 @@ interface TodoCategoryProps {
 const TodoAddCategory: React.FC<TodoCategoryProps> = ({onClose, onCategoryAdded}) => {
   
     const [categoryName, setCategoryName] = useState<string>("");
+    const [error, setError] = useState<ValidationErrors<CategoryFormValues>>({});
+
+  const handleCategoryNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setCategoryName(e.target.value);
+    const fieldErrors = validateCategoryForm({ categoryName: e.target.value });
+    setError((prev) => ({ ...prev, categoryName: fieldErrors.categoryName }));
+    };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+        const validationErrors = validateCategoryForm({categoryName});
+        setError(validationErrors);
+        if (Object.keys(validationErrors).length > 0) return;
         console.log("Submitting Category.....");
 
         const categoryData: TodoCategory = {
@@ -37,16 +47,20 @@ const TodoAddCategory: React.FC<TodoCategoryProps> = ({onClose, onCategoryAdded}
         
         <h2 className="text-2xl font-bold mb-4 text-center">Add Category</h2>
          <div className="mb-2">
-            <label htmlFor="name" className="block mb-1 font-semibold">Category Name</label>
+            <label htmlFor="name" className="block mb-1 font-semibold">
+                Category Name
+            </label>
             <input 
                 id="name"
                 type = "text" 
-                className="w-full border border-gray-300 px-3 py-2 rounded-md" 
+                className={`w-full border px-3 py-2 rounded-md ${
+                    error.categoryName ? "border-red-500" : "border-gray-300"
+                }`}
                 value={categoryName} 
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setCategoryName(e.target.value)}
+                onChange={handleCategoryNameChange}
                 placeholder="e.g. coding, frontend"  
-                required 
             />
+             {error.categoryName && <p className="text-red-500 text-sm mt-1">{error.categoryName}</p>}
         </div>
 
         <div className="flex gap-2 mt-4">

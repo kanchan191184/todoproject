@@ -1,7 +1,6 @@
-
 import React, { useEffect, useState } from "react";
 import { updateTodo, getTodoById, type Todo } from "../services/todos";
-
+import { validateTodoForm, type TodoFormValues, type ValidationErrors } from "../utils/validation";
 
 interface UpdateTodoFormProps {
   todoId: string | undefined;
@@ -15,6 +14,7 @@ const TodoUpdateForm: React.FC<UpdateTodoFormProps> = ({ todoId, onClose, onTodo
     const [name, setName] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [categories, setCategories] = useState("");
+    const [errors, setErrors] = useState<ValidationErrors<TodoFormValues>>({});
 
     useEffect(() => {
     if (todoId) {
@@ -31,9 +31,21 @@ const TodoUpdateForm: React.FC<UpdateTodoFormProps> = ({ todoId, onClose, onTodo
     return <div>Loading...</div>;
     }
 
+    const handleFieldChange = (field: keyof TodoFormValues, value: string) => {
+      if (field === "name") setName(value);
+      if (field === "dueDate") setDueDate(value);
+      if (field === "categories") setCategories(value);
+
+      // Validate this field only
+      const fieldErrors = validateTodoForm({ name, dueDate, categories, [field]: value });
+      setErrors((prev) => ({ ...prev, [field]: fieldErrors[field] }));
+    };
 
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
+          const validationErrors = validateTodoForm({ name, dueDate, categories });
+          setErrors(validationErrors);
+          if (Object.keys(validationErrors).length > 0) return;
 
     const updatedTodo = {
       name,
@@ -62,32 +74,39 @@ const TodoUpdateForm: React.FC<UpdateTodoFormProps> = ({ todoId, onClose, onTodo
         <label className="block mb-1 font-semibold">Title</label>
         <input
           type="text"
-          className="w-full border border-gray-300 px-3 py-2 rounded-md"
+           className={`w-full border px-3 py-2 rounded-md ${
+            errors.name ? "border-red-500" : "border-gray-300"
+          }`}
           value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
+          onChange={e => handleFieldChange("name", e.target.value)}
         />
+        {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
       </div>
 
       <div className="mb-2">
         <label className="block mb-1 font-semibold">Due Date</label>
         <input
           type="date"
-          className="w-full border border-gray-300 px-3 py-2 rounded-md"
+          className={`w-full border px-3 py-2 rounded-md ${
+            errors.dueDate ? "border-red-500" : "border-gray-300"
+          }`}
           value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-          required
+          onChange={e => handleFieldChange("dueDate", e.target.value)}
         />
+        {errors.dueDate && <p className="text-red-500 text-sm mt-1">{errors.dueDate}</p>}
       </div>
 
       <div className="mb-2">
         <label className="block mb-1 font-semibold">Categories (comma separated)</label>
         <input
           type="text"
-          className="w-full border border-gray-300 px-3 py-2 rounded-md"
+          className={`w-full border px-3 py-2 rounded-md ${
+            errors.categories ? "border-red-500" : "border-gray-300"
+          }`}
           value={categories}
-          onChange={(e) => setCategories(e.target.value)}
+          onChange={e => handleFieldChange("categories", e.target.value)}
         />
+        {errors.categories && <p className="text-red-500 text-sm mt-1">{errors.categories}</p>}
       </div>
 
       <div className="flex gap-2 mt-4">

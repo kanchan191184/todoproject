@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { getCategoryById, updateCategory, type Category } from "../services/todos";
+import { validateCategoryForm, type CategoryFormValues, type ValidationErrors } from "../utils/validation";
+
 
 interface UpdateCategoryFormProps {
     categoryId: string | undefined;
@@ -11,6 +13,7 @@ const CategoryUpdateForm: React.FC<UpdateCategoryFormProps> = ({categoryId, onCa
   
     const [category, setCategory] = useState<Category | null>(null);
     const [categoryName, setCategoryName] = useState("");
+    const [error, setError] = useState<ValidationErrors<CategoryFormValues>>({});
     
      useEffect(() => {
         if (categoryId) {
@@ -25,9 +28,24 @@ const CategoryUpdateForm: React.FC<UpdateCategoryFormProps> = ({categoryId, onCa
         return <div>Loading...</div>
       }
 
+       const validate = (value: string) => {
+        if (!value.trim()) return "Category name is required";
+        if (value.trim().length < 3) return "Category name must be at least 3 characters";
+        return "";
+    };
+
+    const handleCategoryNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setCategoryName(e.target.value);
+      const fieldErrors = validateCategoryForm({ categoryName: e.target.value });
+      setError((prev) => ({ ...prev, categoryName: fieldErrors.categoryName }));
+      };
+
       const handleUpdate = async (e: React.FormEvent) => {
               e.preventDefault();
-      
+          const validationErrors = validateCategoryForm({categoryName});
+          setError(validationErrors);
+          if (Object.keys(validationErrors).length > 0) return;
+
           const updatedCategory = {
             categoryName,
           };
@@ -52,11 +70,13 @@ const CategoryUpdateForm: React.FC<UpdateCategoryFormProps> = ({categoryId, onCa
         <label className="block mb-1 font-semibold">Category Name</label>
         <input
           type="text"
-          className="w-full border border-gray-300 px-3 py-2 rounded-md"
+           className={`w-full border px-3 py-2 rounded-md ${
+                        error.categoryName ? "border-red-500" : "border-gray-300"
+                    }`}
           value={categoryName}
-          onChange={(e) => setCategoryName(e.target.value)}
-          required
+          onChange={handleCategoryNameChange}
         />
+        {error.categoryName && <p className="text-red-500 text-sm mt-1">{error.categoryName}</p>}
       </div>
 
       <div className="flex gap-2 mt-4">
