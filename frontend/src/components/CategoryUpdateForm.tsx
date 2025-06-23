@@ -28,12 +28,6 @@ const CategoryUpdateForm: React.FC<UpdateCategoryFormProps> = ({categoryId, onCa
         return <div>Loading...</div>
       }
 
-       const validate = (value: string) => {
-        if (!value.trim()) return "Category name is required";
-        if (value.trim().length < 3) return "Category name must be at least 3 characters";
-        return "";
-    };
-
     const handleCategoryNameChange = (e: ChangeEvent<HTMLInputElement>) => {
       setCategoryName(e.target.value);
       const fieldErrors = validateCategoryForm({ categoryName: e.target.value });
