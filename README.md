@@ -19,7 +19,25 @@ This project allows you to create, update, filter, and organize your tasks with 
 - Summary section for task counts
 - Frontend tests with Vitest and React Testing Library
 
-🏗️ Tech Stack
+## Environment Variables for API URL
+
+  To support both local development and AWS deployment, the frontend uses environment variables for the backend API URL.
+
+- **Local development:**  
+  Create a `.env` file in the `frontend` folder with:
+    - VITE_API_URL=http://localhost:8080
+
+- **Production (AWS):**  
+  Create a `.env.production` file in the `frontend` folder with:
+    - VITE_API_URL=http://<your-elastic-ip>:8080
+
+  Replace `<your-elastic-ip>` with your actual Elastic IP address.
+
+## Note on .env Files
+
+    `.env` and `.env.production` are included in `.gitignore` for security and should be created manually for each environment.
+
+## Tech Stack
 Backend: Java, Spring Boot, JPA/Hibernate, MySQL (or H2), Rest Assured
 Frontend: React, Vite, TypeScript, Tailwind CSS, Vitest, React Testing Library
 

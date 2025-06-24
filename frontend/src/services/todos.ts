@@ -1,3 +1,5 @@
+const API_URL = import.meta.env.VITE_API_URL;
+
 export interface Category {
     id: number;
     categoryName: string;
@@ -25,22 +27,20 @@ export interface TodoCategory {
 }
 
 export const getTodos = async (): Promise<Todo[]> => {
-
-    const response = await fetch('http://localhost:8080/todos');
+    const response = await fetch(`${API_URL}/todos`);
     const todos = await response.json();
     return todos;
 }
 
 export const getCategories = async (): Promise<Category[]> => {
-
-    const response = await fetch('http://localhost:8080/categories');
+    const response = await fetch(`${API_URL}/categories`);
     const categories = await response.json();
     return categories;
 }
 
 
 export const getTodoById = async (id: string | number): Promise<Todo> => {
-  const response = await fetch(`http://localhost:8080/todos/${id}`);
+ const response = await fetch(`${API_URL}/todos/${id}`);
   if (!response.ok) 
     throw new Error("Failed to fetch todo");
 
@@ -48,7 +48,7 @@ export const getTodoById = async (id: string | number): Promise<Todo> => {
 };
 
 export const getCategoryById = async (id: string | number): Promise<Category> => {
-  const response = await fetch(`http://localhost:8080/categories/${id}`);
+const response = await fetch(`${API_URL}/categories/${id}`);
   if (!response.ok) 
     throw new Error("Failed to fetch categories");
 
@@ -56,25 +56,25 @@ export const getCategoryById = async (id: string | number): Promise<Category> =>
 };
 
 export const archiveTodo = async (id: number): Promise<void> => {
-    await fetch(`http://localhost:8080/todos/${id}/archive`, {
+     await fetch(`${API_URL}/todos/${id}/archive`, {
         method: "PATCH",
     });
 }
 
 export const archiveCategory = async (id: number): Promise<void> => {
-    await fetch(`http://localhost:8080/categories/${id}/archive`, {
+     await fetch(`${API_URL}/categories/${id}/archive`, {
         method: "PATCH",
     });
 }
 
 export const completeTodo = async (id: number): Promise<void> => {
-    await fetch(`http://localhost:8080/todos/${id}/complete`, {
+      await fetch(`${API_URL}/todos/${id}/complete`, {
         method: "PATCH"
     });
 }
 
 export const addTodo = async (todoData: TodoData): Promise<Todo> => {
-    const response = await fetch(`http://localhost:8080/todos`, {
+    const response = await fetch(`${API_URL}/todos`, {
          method: "POST",
          headers: {"Content-Type": "application/json" },
          body: JSON.stringify(todoData)
@@ -89,7 +89,7 @@ export const addTodo = async (todoData: TodoData): Promise<Todo> => {
 };
 
 export const addCategory = async (todoCategory: TodoCategory): Promise<Category> => {
-    const response = await fetch(`http://localhost:8080/categories`, {
+    const response = await fetch(`${API_URL}/categories`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(todoCategory)
@@ -108,7 +108,7 @@ export const updateTodo = async (
     data: {name: string, dueDate: string, isCompleted: boolean; categories: string[]}
 
 ): Promise<Todo> => {
-    const response = await fetch(`http://localhost:8080/todos/${id}`, {
+    const response = await fetch(`${API_URL}/todos/${id}`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
@@ -127,7 +127,7 @@ export const updateCategory = async (
     data: {categoryName: string}
 
 ): Promise<Category> => {
-    const response = await fetch(`http://localhost:8080/categories/${id}`, {
+    const response = await fetch(`${API_URL}/categories/${id}`, {    
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
