@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { addCategory, type Category, type TodoCategory } from "../services/todos";
 import { validateCategoryForm, type CategoryFormValues, type ValidationErrors } from "../utils/validation";
-
+import { toast } from "react-toastify";
 
 interface TodoCategoryProps {
   onClose: () => void;
@@ -36,7 +36,14 @@ const TodoAddCategory: React.FC<TodoCategoryProps> = ({onClose, onCategoryAdded}
 
             onCategoryAdded(newCategory);
             onClose();
-        } catch(error) {
+        } catch(error: any) {
+
+            // Show toast for duplicate or validation error
+            if (error.status === 400 && error.data?.errors?.categoryName) {
+                toast.error(error.data.errors.categoryName[0]);
+            } else {
+                toast.error("Failed to add category");
+            }
             console.log(error);
         }
     };

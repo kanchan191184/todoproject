@@ -4,6 +4,7 @@ export interface Category {
     id: number;
     categoryName: string;
     isArchived: boolean;
+    colorClass: string;
 }
 
 export interface Todo {
@@ -96,7 +97,11 @@ export const addCategory = async (todoCategory: TodoCategory): Promise<Category>
     });
 
     if(!response.ok) {
-        throw new Error("Failed to add category");
+        // throw new Error("Failed to add category");
+        // Parse the error body and throw it so you can catch it in the component
+        const errorBody = await response.json();
+        // Attach status for easier checking
+        throw { status: response.status, data: errorBody };
     }
 
     const result = await response.json();

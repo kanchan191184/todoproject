@@ -3,13 +3,13 @@ package io.nology.todoproject.category;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.javafaker.Cat;
-
 import io.nology.todoproject.common.exceptions.NotFoundException;
+import io.nology.todoproject.common.exceptions.ServiceValidationException;
 import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,28 +31,29 @@ public class CategoryController {
     }
     
     @PostMapping
-    public ResponseEntity<Category> create(@RequestBody CreateCategoryDTO data) {
+    public ResponseEntity<Category> create(@RequestBody CreateCategoryDTO data) throws ServiceValidationException {
 
         Category saved = this.categoryService.create(data);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
-        // return ResponseEntity.ok(categoryService.create(data));
     }
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAll() {
-        // return ResponseEntity.ok(categoryService.findAll());
-
-        List<Category> allCategories = this.categoryService.findAll();
+    public ResponseEntity<List<CategoryDTO>> getAll() {
+        List<CategoryDTO> allCategories = this.categoryService.findAll()
+            .stream()
+            .filter(cat -> !cat.getIsArchived())
+            .map(cat -> new CategoryDTO(cat.getId(), cat.getCategoryName()))
+            .collect(Collectors.toList());
         return new ResponseEntity<>(allCategories, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getById(@PathVariable Long id)
+    public ResponseEntity<CategoryDTO> getById(@PathVariable Long id)
         throws NotFoundException {
-        // return categoryService.findById(id).orElse(null);
         Optional<Category> foundCategory = this.categoryService.findById(id);
         if(foundCategory.isPresent()) {
-            return new ResponseEntity<>(foundCategory.get(), HttpStatus.OK);
+            Category cat = foundCategory.get();
+            return new ResponseEntity<>(new CategoryDTO(cat.getId(), cat.getCategoryName()), HttpStatus.OK);
             } 
         throw new NotFoundException("Category with id" + id + " not found");
     }
@@ -60,10 +61,6 @@ public class CategoryController {
     @PutMapping("/{id}")
     public ResponseEntity<Category> update(@Valid @PathVariable Long id, @RequestBody UpdateCategoryDTO data) 
         throws NotFoundException {
-        // return categoryService.updateById(id, data)
-        //     .map(ResponseEntity::ok)
-        //     .orElse(ResponseEntity.notFound().build());
-
         Optional<Category> result = this.categoryService.updateById(id, data);
         Category updated = result.orElseThrow(
             () -> new NotFoundException("Could not update category with id " + id + ", it does not exist"));

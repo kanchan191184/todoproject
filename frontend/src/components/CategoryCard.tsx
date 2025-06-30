@@ -11,7 +11,7 @@ const CategoryCard = ({category, onDelete, onUpdate}: CategoryCardProps) => {
   return (
     <tr className="border-b border-gray-200">
       <td className="border border-gray-300 px-4 py-2">
-        <CategoryBadge name = {category.categoryName} />
+        <CategoryBadge name = {category.categoryName} color={category.colorClass}/>
       </td>
       <td className="border border-gray-300 px-4 py-2">
         <div className="flex gap-2">

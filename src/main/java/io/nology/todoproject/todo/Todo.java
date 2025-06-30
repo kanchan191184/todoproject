@@ -1,33 +1,37 @@
 package io.nology.todoproject.todo;
 
-import jakarta.persistence.Table;
-
 import java.util.HashSet;
 import java.util.Set;
 import io.nology.todoproject.category.Category;
 import jakarta.persistence.*;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 
+// This class represents a Todo entity mapped to the "todos" table in the database.
 @Entity
 @Table(name = "todos")
 public class Todo {
+
+    // Primary key with auto-increment
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Name of the todo - cannot be null
     @Column(nullable = false)
     private String name;
 
+    // Indicates if the todo is completed
     private Boolean isCompleted;
+
+    // Due date as a string (should ideally be stored as a LocalDate or Date)
     private String dueDate;
 
+    // Soft delete flag to mark todos as archived instead of deleting them
     @Column(nullable = false)
     private Boolean isArchived = false;
+
+    // Many-to-Many relationship with categories
+    // Each todo can have multiple categories and each category can be linked to multiple todos
+    // Data is fetched eagerly (all categories are loaded with the todo)
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

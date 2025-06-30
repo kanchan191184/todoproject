@@ -3,6 +3,7 @@ import TodoAddCategory from "../components/TodoAddCategory";
 import CategoryCard from "../components/CategoryCard";
 import { archiveCategory, getCategories, type Category } from "../services/todos";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const CategoryPage = () => {
 
@@ -21,6 +22,7 @@ const CategoryPage = () => {
     const handleDelete = async(id: number) => {
         await archiveCategory(id);
         setCategories(categories.filter((category) => category.id !== id));
+        toast.success("Category deleted!");
       }
     
   return (
@@ -32,7 +34,7 @@ const CategoryPage = () => {
       />
 
     <h2 className="text-2xl font-bold my-6">List of Categories</h2>
-    <div w-full max-w-5xl>
+    <div className="w-full max-w-5xl">
         <table className="w-full border-collapse border border-gray-300">
           <thead className="bg-gray-100">
             <tr>

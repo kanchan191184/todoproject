@@ -15,10 +15,10 @@ export type ValidationErrors<T> = Partial<Record<keyof T, string>>;
 export function validateTodoForm(values: TodoFormValues): ValidationErrors<TodoFormValues> {
   
     const errors: ValidationErrors<TodoFormValues> = {};
-  const categoriesArray = values.categories
-    .split(",")
-    .map((cat) => cat.trim())
-    .filter((cat) => cat);
+    const categoriesArray = values.categories
+      .split(",")
+      .map((cat) => cat.trim())
+      .filter((cat) => cat);
 
   if (!values.name.trim()) {
     errors.name = "Name is required";
@@ -36,7 +36,6 @@ export function validateTodoForm(values: TodoFormValues): ValidationErrors<TodoF
 
   return errors;
 }
-
 
 // --- Category Validation ---
 export function validateCategoryForm(values: CategoryFormValues): ValidationErrors<CategoryFormValues> {

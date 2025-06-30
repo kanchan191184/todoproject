@@ -1,15 +1,56 @@
 import type { Todo } from "../services/todos";
 import CategoryBadge from "./CategoryBadge";
+import TodoActions from "./TodoActions";
 
 interface TodoCardProps {
     todo: Todo;
     onDelete: (id: number) => void;
     onUpdate: (todo: Todo) => void;
     onComplete: (id: number) => void;
+    isMobile?: boolean;
 }
 
-const TodoCard = ({todo, onDelete, onUpdate, onComplete}: TodoCardProps) => {
-  return (
+const TodoCard = ({todo, onDelete, onUpdate, onComplete, isMobile = false}: TodoCardProps) => {
+
+    const renderCategoryBadges = () => {
+      if (!Array.isArray(todo.categories) || todo.categories.length === 0) {
+        return <span className="text-gray-400 italic">No categories</span>;
+      }
+
+      return todo.categories.map((cat: any) =>
+        cat?.categoryName ? (
+          <CategoryBadge key={cat.id ?? cat.categoryName} name={cat.categoryName} color={cat.colorClass} />
+        ) : null
+      );
+    };
+  
+    const isOverdue = !todo.isCompleted && new Date(todo.dueDate) < new Date();
+
+    return isMobile ? (
+       // --- Mobile Card View ---
+      <div className={`border border-gray-300 rounded p-3 shadow bg-white 
+                      flex flex-col gap-2 p-3 text-sm 
+                      md:text-base md:p-6 md:gap-3 md:shadow-lg`}>
+        <div><span className="font-semibold">Title:</span> {todo.name}</div>
+        <div><span className="font-semibold">Categories:</span> {renderCategoryBadges()}</div>
+        <div><span className="font-semibold">Due Date:</span> {todo.dueDate}</div>
+        <div>
+          <span className="font-semibold">Status:</span>{" "}
+          {isOverdue ? (
+            <span className="text-red-600 font-bold">Overdue</span>
+          ) : (
+            <span className="text-green-600">On Time</span>
+          )}
+        </div>
+        <div>
+          <span className="font-semibold">Completed:</span> {todo.isCompleted ? "YES" : "NO"}
+        </div>
+
+        <TodoActions todo={todo} onUpdate={onUpdate} onDelete={onDelete} onComplete={onComplete} />
+      </div>
+    ) : (
+
+       // --- Desktop Table Row View ---
       <tr className="border-b border-gray-200">
       <td className="border border-gray-300 font-bold px-4 py-2">{todo.name}</td>
       <td className="border border-gray-300 px-4 py-2">
@@ -17,7 +58,7 @@ const TodoCard = ({todo, onDelete, onUpdate, onComplete}: TodoCardProps) => {
         {Array.isArray(todo.categories) && todo.categories.length > 0 ? (
           todo.categories.map((cat: any) =>
             cat?.categoryName ? (
-              <CategoryBadge key={cat.id ?? cat.categoryName} name={cat.categoryName} />
+              <CategoryBadge key={cat.id ?? cat.categoryName} name={cat.categoryName} color={cat.colorClass} />
             ) : null
           )
         ) : (
@@ -26,45 +67,22 @@ const TodoCard = ({todo, onDelete, onUpdate, onComplete}: TodoCardProps) => {
       </td>
       <td className="border border-gray-300 px-4 py-2">{todo.dueDate}</td>
       <td className="border border-gray-300 px-4 py-2">
-        {!todo.isCompleted && new Date(todo.dueDate) < new Date() ? (
-          <span className="text-red-600 font-bold">Overdue</span>
+        {isOverdue ? (
+          <span className="text-red-600 font-semibold">Overdue</span>
         ) : (
-          <span className="text-green-600 font-bold">On Time</span>
+          <span className="text-green-600 font-semibold">On Time</span>
         )}
       </td>
       <td className="border border-gray-300 px-4 py-2 font-semibold">
         {todo.isCompleted ? "YES" : "NO"}
       </td>
       <td className="border border-gray-300 px-4 py-2">
-        <div className="flex gap-2">
-          <button className="bg-blue-500 text-white font-semibold px-3 py-1 rounded hover:bg-blue-600"
-          onClick={() => onUpdate(todo)}
-          >
-            Update
-          </button>
-          <button
-            className="bg-red-500 text-white font-semibold px-3 py-1 rounded hover:bg-red-600"
-            onClick={() => onDelete(todo.id)}
-          >
-            Delete
-          </button>
-          <button className="
-            bg-green-600 
-            text-white 
-            font-semibold px-3 py-1 
-            rounded hover:bg-green-700
-            disabled:bg-gray-400
-            disabled:cursor-not-allowed"
-
-            onClick={() => onComplete(todo.id)}
-            disabled={todo.isCompleted}
-          >
-            Complete
-          </button>
-        </div>
+        <TodoActions todo={todo} onUpdate={onUpdate} onDelete={onDelete} onComplete={onComplete} />
       </td>
     </tr>
   )
 }
 
 export default TodoCard;
+
+

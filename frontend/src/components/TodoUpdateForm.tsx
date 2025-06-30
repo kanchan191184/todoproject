@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { updateTodo, getTodoById, type Todo } from "../services/todos";
 import { validateTodoForm, type TodoFormValues, type ValidationErrors } from "../utils/validation";
+import { toast } from "react-toastify";
 
 interface UpdateTodoFormProps {
   todoId: string | undefined;
@@ -47,20 +48,23 @@ const TodoUpdateForm: React.FC<UpdateTodoFormProps> = ({ todoId, onClose, onTodo
           setErrors(validationErrors);
           if (Object.keys(validationErrors).length > 0) return;
 
-    const updatedTodo = {
-      name,
-      dueDate,
-      isCompleted: todo.isCompleted,
-      categories: categories.split(",").map((cat) => cat.trim())
-    };
+        const updatedTodo = {
+          name,
+          dueDate,
+          isCompleted: todo.isCompleted,
+          categories: categories.split(",").map((cat) => cat.trim())
+        };
 
-    try {
-    const result = await updateTodo(todo.id, updatedTodo); // <- fetch updated version
-    onTodoUpdated(result);
-    onClose();       // close form
-    } catch (error) {
-      console.error("Update failed:", error);
-    }
+        try {
+        const result = await updateTodo(todo.id, updatedTodo); // <- fetch updated version
+
+        toast.success("Todo updated!"); // <-- Show toast on success
+        
+        onTodoUpdated(result);
+        onClose();       // close form
+        } catch (error) {
+          console.error("Update failed:", error);
+        }
   };
 
   return (

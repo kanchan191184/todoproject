@@ -1,7 +1,7 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { getCategoryById, updateCategory, type Category } from "../services/todos";
 import { validateCategoryForm, type CategoryFormValues, type ValidationErrors } from "../utils/validation";
-
+import { toast } from "react-toastify";
 
 interface UpdateCategoryFormProps {
     categoryId: string | undefined;
@@ -35,7 +35,7 @@ const CategoryUpdateForm: React.FC<UpdateCategoryFormProps> = ({categoryId, onCa
       };
 
       const handleUpdate = async (e: React.FormEvent) => {
-              e.preventDefault();
+          e.preventDefault();
           const validationErrors = validateCategoryForm({categoryName});
           setError(validationErrors);
           if (Object.keys(validationErrors).length > 0) return;
@@ -46,6 +46,8 @@ const CategoryUpdateForm: React.FC<UpdateCategoryFormProps> = ({categoryId, onCa
       
           try {
           const result = await updateCategory(category.id, updatedCategory); // <- fetch updated version
+
+          toast.success("Category updated!"); // <-- Show toast on success
           onCategoryUpdated(result);
           onClose();       // close form
           } catch (error) {

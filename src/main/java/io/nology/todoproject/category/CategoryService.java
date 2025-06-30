@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import io.nology.todoproject.common.ValidationErrors;
+import io.nology.todoproject.common.exceptions.ServiceValidationException;
 import io.nology.todoproject.todo.Todo;
 import io.nology.todoproject.todo.TodoRepository;
 import jakarta.transaction.Transactional;
@@ -19,7 +21,15 @@ public class CategoryService {
         this.todoRepository = todoRepository;
     }
 
-    public Category create(CreateCategoryDTO data) {
+    public Category create(CreateCategoryDTO data) throws ServiceValidationException {
+         // Check if category already exists
+        Optional<Category> existing = categoryRepository.findByCategoryName(data.getCategoryName());
+        if (existing.isPresent()) {
+           ValidationErrors errors = new ValidationErrors();
+           errors.add("categoryName", "Category name already exists");
+           throw new ServiceValidationException(errors);
+        }
+
         Category category = new Category();
         category.setCategoryName(data.getCategoryName());
         return categoryRepository.save(category);
@@ -41,12 +51,6 @@ public class CategoryService {
             category.setCategoryName(data.getCategoryName());
         }
         return Optional.of(categoryRepository.save(category));
-    }
-    
-    public boolean deleteById(Long id) {
-        if (!categoryRepository.existsById(id)) return false;
-        categoryRepository.deleteById(id);
-        return true;
     }
 
     @Transactional
